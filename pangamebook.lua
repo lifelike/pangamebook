@@ -147,8 +147,18 @@ function Blocks(blocks)
   return blocks
 end
 
+function Meta(meta)
+   local mapped_meta = {}
+   for k, v in pairs(mapped) do
+      mapped_meta[k] = tostring(v)
+   end
+   meta["pangamebook-mapping"] = mapped_meta
+   return meta
+end
+
 return {
    {Pandoc = Pandoc},
    {Header = Header},
-   {Link = Link}
+   {Link = Link},
+   {Meta = Meta}
 }

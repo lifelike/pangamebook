@@ -110,6 +110,21 @@ edits will have to be done again if the document is ever recreated. It is better
 to read up on how to apply styles to the generated file, for instance by using a
 template style Word document.
 
+# Export Heading Map (Advanced)
+Most will never need to use this, but
+the mapping of headers to numbers
+is added as metadata by the filter, normally not
+included in the output.
+One way to look at it is to output a JSON file using Pandoc:
+
+    pandoc --lua-filter=pangamebook.lua -o example.json example.md
+
+Look for the key **pangamebook-mapping**. The value is an object with
+all headers mapped to numbers (as strings), although with some extra
+data that has to be filtered out because of how Pandoc stores metadata.
+Here is an example of what a key and value can look like:
+    "#second" : {"t" : "MetaString",
+        "c" : "2"}
 # Development
 Bug reports and feature requests are welcome on GitHub. The goal is to keep this
 tool very simple and focus on only numbering the sections. Additions are most
