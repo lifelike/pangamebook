@@ -5,10 +5,11 @@ Pandoc to shuffle and number sections in the document being converted. The only
 known use-case is to create a classic gamebook.
 
 Pandoc and Pangamebook should run on most modern computers. It has been tested
-on desktop computers running Linux (Lubuntu and Debian) and FreeBSD. Also on a
-Raspberry Pi 4 running Raspberry Pi OS and on an Android phone (in Termux).
+on desktop computers running Windows 10, Linux (Lubuntu and Debian) and FreeBSD
+13.0. Also on a Raspberry Pi 4 running Raspberry Pi OS and on an Android phone
+(in Termux).
 
-(TBD: Test in Windows 10 and OSX.)
+(TBD: Test in OSX.)
 
 # Installing
 To use this filter you need to have Pandoc 2.1 or later installed (see
