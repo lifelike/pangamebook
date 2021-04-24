@@ -21,6 +21,12 @@ The Pangamebook filter itself does not have to be installed. The file
 *pangamebook.lua* must be copied to somewhere on your computer and
 named on the command-line when running pandoc (see examples below).
 
+## Windows
+Install Pandoc. Install MikTex (as linked from the Pandoc download page).
+Restart computer. Download *pangamebook.lua* and *example.md*.
+That should be enough to be able to run all the
+examples below. Otherwise search for help.
+
 # Input Document
 First you need to write your gamebook. The recommended format is [Pandoc's
 Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown). That is the format

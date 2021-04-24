@@ -1,7 +1,18 @@
-# Pangamebook Example Gamebook
+---
+title: Pangamebook Gamebook Example
+author: Pelle Nilsson
+---
+
+# Pangamebook Gamebook Example
 This is just an example to give new users and idea where to start. See [Pandoc
 Getting Started Article](https://pandoc.org/getting-started.html) and
 [PangamebookREADME](README.md) for more information.
+
+The lines at the very top of this file are needed to add some metadata
+for the book. Otherwise there are ugly warnings when creating EPUB files
+and possibly for other formats as well. Good to always include some
+lines like that. Normally they are invisible and should not show
+up in the output at all.
 
 # Introduction
 Sections with a header like this one will not be affected by the Pangamebook
