@@ -2,7 +2,7 @@
 [Pandoc](https://pandoc.org) is a free tool that converts documents between a
 large number of file formats. *Pangamebook* is a filter that can be used with
 Pandoc to shuffle and number sections in the document being converted. The only
-known use-case is to create a classic gamebook.
+known use-case is to create a classic [gamebook](https://en.wikipedia.org/wiki/Gamebook).
 
 Pandoc and Pangamebook should run on most modern computers. It has been tested
 on desktop computers running Windows 10, Linux (Lubuntu and Debian) and FreeBSD
