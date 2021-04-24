@@ -67,7 +67,7 @@ as mentioned above, will not be affected.
 All cross-references in the document will lastly be updated to display
 the number they refer to, so what was in the original document
 "see first_room" (where *first_room* is a valid cross-reference, not just text)
-will become someting like "see 12".
+will become something like "see 12".
 
 The best way to learn is probably to experiment with the included
 *example.md* and skim some of Pandoc's documentation.
