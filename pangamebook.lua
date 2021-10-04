@@ -7,9 +7,15 @@ local mapped = {}
 function get_nr_for_header(text, identifier)
   local key = "#" .. identifier
   local name_nr = tonumber(text)
-  if name_nr ~= nil and name_nr >= nr then
-    mapped[key] = name_nr
-    nr = name_nr + 1
+  if name_nr ~= nil then
+    if name_nr >= nr then
+       mapped[key] = name_nr
+       nr = name_nr + 1
+    else
+       print("ERROR: Section number " .. name_nr
+             .. " too low (expected >= " .. nr .. ")")
+       os.exit(1)
+    end
   else
     mapped[key] = nr
     nr = nr + 1
