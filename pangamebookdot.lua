@@ -26,7 +26,7 @@ function Pandoc(doc)
    end
    local in_header = nil
    local identifiers = {}
-   local output = "digraph gamebook {\n"
+   local output = "digraph gamebook {node[shape=box]\n"
    for i,el in pairs(doc.blocks) do
       if (el.t == "Header"
           and el.level == 1) then
