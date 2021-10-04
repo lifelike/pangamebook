@@ -112,6 +112,12 @@ to generate for instance a MS Word or LibreOffice Word document:
     pandoc --lua-filter=pangamebook.lua -o example.docx example.md
     pandoc --lua-filter=pangamebook.lua -o example.odt example.md
 
+To output RTF the *--standalone* (or *-s*) flag is needed for pandoc, unless
+you know what you are doing and really want only a partial RTF document (that
+is not likely, so remember that flag):
+
+    pandoc --lua-filter=pangamebook.lua -s -o example.rtf example.md
+
 Manually editing the document after running Pandoc is probably a bad idea. Any
 edits will have to be done again if the document is ever recreated. It is better
 to read up on how to apply styles to the generated file, for instance by using a
