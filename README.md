@@ -86,6 +86,13 @@ documents as part of converting them, but see [Pandoc's User
 Guide](https://pandoc.org/MANUAL.html) for information on all the ways you can
 add style to the output document.
 
+# Gamebook Graph (Graphviz DOT)
+The Pandoc filter *pangamebookdot.lua* is included to create a plain-text
+DOT file from a generated gamebook, that can then be used with the *dot*
+command from [Graphviz](https://graphviz.org) to generate an image (e.g PNG)
+of how all sections in the book are connected. Both the original header
+and assigned number of each section is included in the graph.
+
 # Examples
 The file *example.md* is a Pandoc Markdown example gamebook. Open your favorite
 terminal and cd to this directory. The following commands can be used to
@@ -109,6 +116,20 @@ Manually editing the document after running Pandoc is probably a bad idea. Any
 edits will have to be done again if the document is ever recreated. It is better
 to read up on how to apply styles to the generated file, for instance by using a
 template style Word document.
+
+To generate a graph from the book first create a new Markdown document
+using the pangamebook filter and then use the pangamebookdot filter
+on the resulting document, before running the Graphviz dot command.
+Pandoc must be told to use plain-text as output format when
+creating the DOT file.
+
+    pandoc --lua-filter=pangamebook.lua -o example2.md example.md
+    pandoc --lua-filter=pangamebookdot.lua -t plain -o example2.dot example2.md
+    dot -Tpng -O example2.dot
+
+The generated graph will be in the file *example2.dot.png*.
+
+![example graph example2.dot.png](example2.dot.png)
 
 # Export Heading Map (Advanced)
 Most will never need to use this, but
