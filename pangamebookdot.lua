@@ -13,7 +13,12 @@ function name_from_header(b)
                            end
                         end
    })
-   return result .. " " .. b.identifier
+   if (b.identifier == "section"
+       or b.identifier:sub(1, 8) == "section-") then
+      return result
+   else
+      return result .. "\\n" .. b.identifier
+   end
 end
 
 function dot_link(from, to)
