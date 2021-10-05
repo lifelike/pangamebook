@@ -1,5 +1,10 @@
 -- pandoc filter to turn headers and links into numbers
 -- Copyright 2021 Pelle Nilsson
+-- MIT License
+-- source: https://github.com/lifelike/pangamebook
+
+-- version: 1.1 (2021-10-05)
+-- fossil hash: db17fe61a7e3c56b7afe1132bdbe4c0ea6ec82102fb22b5207d2475eaace35a7
 
 local nr = 1
 local mapped = {}
