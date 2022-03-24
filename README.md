@@ -86,6 +86,21 @@ documents as part of converting them, but see [Pandoc's User
 Guide](https://pandoc.org/MANUAL.html) for information on all the ways you can
 add style to the output document.
 
+# Configuration
+Pandoc Metadata can be used to configure the output of pangamebook. The
+*-M* (or *--metadata*) flag is used for pandoc to add metadata variables.
+The following variables are supported. Values can also be set in the
+input document for file formats that support metadata blocks (e.g. Pandoc's
+Markdown).
+
+Name                   Type     Default     Description
+---------------------- -------  -------     ---------------------------------
+gamebook-post-link     string   ''          Text to add after every link
+gamebook-pre-link      string   ''          Text to add before every link
+gamebook-shuffle       boolean  true        Shuffle sections
+gamebook-strong-links  boolean  true        Use strong text style for links
+
+
 # Gamebook Graph (Graphviz DOT)
 The Pandoc filter *pangamebookdot.lua* is included to create a plain-text
 DOT file from a generated gamebook, that can then be used with the *dot*
@@ -122,6 +137,11 @@ Manually editing the document after running Pandoc is probably a bad idea. Any
 edits will have to be done again if the document is ever recreated. It is better
 to read up on how to apply styles to the generated file, for instance by using a
 template style Word document.
+
+This is how to set some metadata variables, in this case to put double square brackets
+around links and disable shuffling:
+
+    pandoc -Mgamebook-shuffle=false -Mgamebook-pre-link="[[" -Mgamebook-post-link="]]" --lua-filter=pangamebook.lua -o example.html example.md
 
 To generate a graph from the book first create a new Markdown document
 using the pangamebook filter and then use the pangamebookdot filter
@@ -165,7 +185,7 @@ mirror that is updated with new releases.
 # LICENSE
 MIT License
 
-Copyright (c) 2021 Pelle Nilsson
+Copyright (c) 2021-2022 Pelle Nilsson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

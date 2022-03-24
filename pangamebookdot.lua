@@ -1,10 +1,10 @@
 -- pandoc filter to output Graphviz DOT graph from gamebook
--- Copyright 2021 Pelle Nilsson
+-- Copyright 2021-2022 Pelle Nilsson
 -- MIT License
 -- source: https://github.com/lifelike/pangamebook
 
--- version: 1.1 (2021-10-05)
--- fossil hash: db17fe61a7e3c56b7afe1132bdbe4c0ea6ec82102fb22b5207d2475eaace35a7
+-- version: 1.2 (2022-03-24)
+-- fossil hash: 5f58b0d1e74619524ff8f64c17488a0df5e4a4d24ef9a2ceb312311db4be2c33
 
 function name_from_header(b)
    local result = ""

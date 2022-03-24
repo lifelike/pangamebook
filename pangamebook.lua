@@ -1,13 +1,17 @@
 -- pandoc filter to turn headers and links into numbers
--- Copyright 2021 Pelle Nilsson
+-- Copyright 2021-2022 Pelle Nilsson
 -- MIT License
 -- source: https://github.com/lifelike/pangamebook
 
--- version: 1.1 (2021-10-05)
--- fossil hash: db17fe61a7e3c56b7afe1132bdbe4c0ea6ec82102fb22b5207d2475eaace35a7
+-- version: 1.2 (2022-03-24)
+-- fossil hash: 5f58b0d1e74619524ff8f64c17488a0df5e4a4d24ef9a2ceb312311db4be2c33
 
 local nr = 1
 local mapped = {}
+
+local strong_links = false
+local link_pre = ''
+local link_post = ''
 
 function get_nr_for_header(text, identifier)
   local key = "#" .. identifier
@@ -76,11 +80,28 @@ function insert_sections(sections,
    table.insert(sections, section)
 end
 
-function Pandoc(doc)
+function from_meta_bool(meta, name, default)
+   value = meta[name]
+   if value ~= nil then
+      return value
+   end
+   return default
+end
+
+function from_meta_string(meta, name, default)
+   value = meta[name]
+   if value ~= nil then
+      return value
+   end
+   return default
+end
+
+function shuffle_blocks(doc)
    local sections = {}
    local first_section_i = 0
    local current_section_start = -1
    local blocks = {}
+
    for i,el in pairs(doc.blocks) do
       if (el.t == "Header"
           and el.level == 1) then
@@ -114,7 +135,19 @@ function Pandoc(doc)
    if #sections > 0 then
       shuffle_insert(blocks, sections)
    end
-   return pandoc.Pandoc(blocks, doc.meta)
+   return blocks
+end
+
+function Pandoc(doc)
+  strong_links = from_meta_bool(doc.meta, "gamebook-strong-links", true)
+  link_pre = from_meta_string(doc.meta, "gamebook-pre-link", "")
+  link_post = from_meta_string(doc.meta, "gamebook-post-link", "")
+
+  if from_meta_bool(doc.meta, "gamebook-shuffle", true) then
+     return pandoc.Pandoc(shuffle_blocks(doc), doc.meta)
+  else
+     return doc
+  end
 end
 
 function Header(el)
@@ -146,12 +179,16 @@ function Link(el)
      return
   end
   local nr = mapped[el.target]
+  local content
   if nr == nil then
-    return pandoc.Link(pandoc.Strong(pandoc.Str(el.target)), el.target)
+    content = pandoc.Str(link_pre .. el.target .. link_post)
   else
-    local content = pandoc.Strong(pandoc.Str(nr))
-    return pandoc.Link(content, el.target)
+    content = pandoc.Str(link_pre .. nr .. link_post)
   end
+  if strong_links then
+     content = pandoc.Strong(content)
+  end
+  return pandoc.Link(content, el.target)
 end
 
 function Blocks(blocks)
