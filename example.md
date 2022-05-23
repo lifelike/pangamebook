@@ -2,8 +2,6 @@
 title: Pangamebook Gamebook Example
 author: Pelle Nilsson
 ---
-
-# Pangamebook Gamebook Example
 This is just an example to give new users and idea where to start. See [Pandoc
 Getting Started Article](https://pandoc.org/getting-started.html) and
 [PangamebookREADME](README.md) for more information.
