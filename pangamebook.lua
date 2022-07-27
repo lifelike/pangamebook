@@ -3,7 +3,7 @@
 -- MIT License
 -- source: https://github.com/lifelike/pangamebook
 
--- version: 1.2.1 (2022-05-24)
+-- version: 1.2.2 (2022-07-28)
 -- fossil hash: 9490b64197fcd8b1c85e3e075ee80486142d360cb997ba2b31ae4e44fa1e6f96
 
 local nr = 1
@@ -139,6 +139,7 @@ function shuffle_blocks(doc)
 end
 
 function Pandoc(doc)
+  number_sections = from_meta_bool(doc.meta, "gamebook-numbers", true)
   strong_links = from_meta_bool(doc.meta, "gamebook-strong-links", true)
   link_pre = from_meta_string(doc.meta, "gamebook-pre-link", "")
   link_post = from_meta_string(doc.meta, "gamebook-post-link", "")
@@ -152,6 +153,7 @@ end
 
 function Header(el)
   if (el.level ~= 1
+      or not number_sections
       or not (is_valid_section_name(el)
               or is_number_section_name(el))) then
      return el

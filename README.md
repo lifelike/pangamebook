@@ -95,6 +95,7 @@ Markdown).
 
 Name                   Type     Default     Description
 ---------------------- -------  -------     ---------------------------------
+gamebook-numbers       boolean  true        Replace section names with numbers
 gamebook-post-link     string   ''          Text to add after every link
 gamebook-pre-link      string   ''          Text to add before every link
 gamebook-shuffle       boolean  true        Shuffle sections
