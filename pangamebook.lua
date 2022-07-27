@@ -3,8 +3,8 @@
 -- MIT License
 -- source: https://github.com/lifelike/pangamebook
 
--- version: 1.2.2 (2022-07-28)
--- fossil hash: 9490b64197fcd8b1c85e3e075ee80486142d360cb997ba2b31ae4e44fa1e6f96
+-- version: 1.3.0 (2022-07-28)
+-- fossil hash: fa77eb8b8fc57601a586630030543f9ce6e1c69e161453e574e16ef6127195a8
 
 local nr = 1
 local mapped = {}
