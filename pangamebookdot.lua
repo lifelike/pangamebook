@@ -3,8 +3,8 @@
 -- MIT License
 -- source: https://github.com/lifelike/pangamebook
 
--- version: 1.4.0 (2022-08-13)
--- fossil hash: 26a5a109f73c864b55ff771891a8156d8167e0e3d1fbcb2f9a537a4a34bc3364
+-- version: 1.5.0 (2023-01-20)
+-- fossil hash: f223851d094c9358feefd5c0a5a74506c98fdb14873dfab5afc23664a326ea87
 
 function one_string_from_block(b)
    local result = ""

@@ -7,7 +7,7 @@ known use-case is to create a classic [gamebook](https://en.wikipedia.org/wiki/G
 Pandoc and Pangamebook should run on most modern computers. It has been tested
 on desktop computers running Windows 10, Linux (Lubuntu and Debian) and FreeBSD
 13.0. Also on a Raspberry Pi 4 running Raspberry Pi OS and on an Android phone
-(in Termux).
+(in Termux). Tested versions of Pandoc include 2.9.2.1 and 3.0.
 
 (TBD: Test in OSX.)
 
@@ -98,9 +98,9 @@ Name                   Type     Default     Description
 gamebook-numbers       boolean  true        Replace section names with numbers
 gamebook-post-link     string   ''          Text to add after every link
 gamebook-pre-link      string   ''          Text to add before every link
+gamebook-randomseed    integer  2023        Set random seed for shuffle
 gamebook-shuffle       boolean  true        Shuffle sections
 gamebook-strong-links  boolean  true        Use strong text style for links
-
 
 # Gamebook Graph (Graphviz DOT)
 The Pandoc filter *pangamebookdot.lua* is included to create a plain-text
@@ -186,7 +186,7 @@ mirror that is updated with new releases.
 # LICENSE
 MIT License
 
-Copyright (c) 2021-2022 Pelle Nilsson
+Copyright (c) 2021-2023 Pelle Nilsson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -1,10 +1,10 @@
 -- pandoc filter to turn headers and links into numbers
--- Copyright 2021-2022 Pelle Nilsson
+-- Copyright 2021-2023 Pelle Nilsson
 -- MIT License
 -- source: https://github.com/lifelike/pangamebook
 
--- version: 1.4.0 (2022-08-13)
--- fossil hash: 26a5a109f73c864b55ff771891a8156d8167e0e3d1fbcb2f9a537a4a34bc3364
+-- version: 1.5.0 (2023-01-20)
+-- fossil hash: f223851d094c9358feefd5c0a5a74506c98fdb14873dfab5afc23664a326ea87
 
 local nr = 1
 local mapped = {}
@@ -145,6 +145,15 @@ function Pandoc(doc)
   link_post = from_meta_string(doc.meta, "gamebook-post-link", "")
 
   if from_meta_bool(doc.meta, "gamebook-shuffle", true) then
+     local seed_number = 2023
+     local metadata_seed = doc.meta["gamebook-randomseed"]
+     if metadata_seed ~= nil then
+        local metadata_seed_number = tonumber(seed)
+        if metadta_seed_number ~= nil then
+           seed_number = metadta_seed_number
+        end
+     end
+     math.randomseed(seed_number)
      return pandoc.Pandoc(shuffle_blocks(doc), doc.meta)
   else
      return doc
