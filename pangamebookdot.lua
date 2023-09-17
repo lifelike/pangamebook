@@ -3,8 +3,8 @@
 -- MIT License
 -- source: https://github.com/lifelike/pangamebook
 
--- version: 1.5.1 (2023-01-20)
--- fossil hash: 7d95c4d608a9545a21e19a3a533617d069ef679641b7c03f3477f394c5ba83c8
+-- version: 1.6.0 (2023-09-17)
+-- fossil hash: 9f49e29be2c571cf2d7d6d1a01c6b02fe3c8814c9640fa7a162c31e358414342
 
 function one_string_from_block(b)
    local result = ""
@@ -68,16 +68,16 @@ function Pandoc(doc)
          end
          in_section = el.identifier
          links_out = false
-      elseif el.t == "Para" and in_section then
-         for j,c in pairs(el.content) do
-            if c.t == "Link" then
+      elseif in_section then
+         pandoc.walk_block(el, {
+            Link = function(c)
                local target = identifiers[c.target]
                if target then
                   output = output .. dot_link(in_section, target)
                   links_out = true
                end
             end
-         end
+         })
       end
    end
    if in_section and not links_out then

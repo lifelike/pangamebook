@@ -1,15 +1,13 @@
 # Pangamebook
 [Pandoc](https://pandoc.org) is a free tool that converts documents between a
-large number of file formats. *Pangamebook* is a filter that can be used with
+large number of file formats. **Pangamebook** is a filter that can be used with
 Pandoc to shuffle and number sections in the document being converted. The only
-known use-case is to create a classic [gamebook](https://en.wikipedia.org/wiki/Gamebook).
+known use-case is to create classic [gamebooks](https://en.wikipedia.org/wiki/Gamebook).
 
 Pandoc and Pangamebook should run on most modern computers. It has been tested
-on desktop computers running Windows 10, Linux (Lubuntu and Debian) and FreeBSD
-13.0. Also on a Raspberry Pi 4 running Raspberry Pi OS and on an Android phone
-(in Termux). Tested versions of Pandoc include 2.9.2.1 and 3.0.
-
-(TBD: Test in OSX.)
+on desktop computers running Windows 10, Linux (Lubuntu and Debian) and FreeBSD.
+Also on a Raspberry Pi 4 running Raspberry Pi OS and on an Android phone (in
+Termux). Tested versions of Pandoc include 2.9.2.1 and 3.0.
 
 # Installing
 To use this filter you need to have Pandoc 2.1 or later installed (see
@@ -41,30 +39,32 @@ to that format. Most modern text editors support Markdown, so
 it should not be difficult to get started.
 
 # What the Filter Does
-Pangamebook looks for all top-level headers that contain of only lowercase
+Pangamebook looks for all top-level headers that consists of only lowercase
 letters, digits, and underscores. Headers like *start*, *first_room*, or
 *finding_some_loot_23* will be affected, but headers like *Introduction*, *How
-To Play*, *Character Sheet*, or *Epilogue* will be ignored.
+To Play*, *character sheet*, or *Epilogue* will be ignored (as they contain
+upper-case letters and/or spaces). All ignored sections are expected to be
+either at the very beginning or end of the document.
 
-A top-level header that is a (positive) number will also be ignored, as that
-number will be used as-is instead.
+Pangamebook collects each affected (i.e. non-ignored) header together with
+everything that follows it up until the next top-level header, including
+lower-level headers and all text and images and tables etc. That collection is
+considered a *section*.
 
-Pangamebook shuffles all affected headers together with everything that
-follows it up until the next top-level header, including lower-level headers
-and all text and images and tables etc. That collection of things that
-is moved together with the header is considered a *section*.
+A top-level header that is a (positive) number will keep that number in
+the output document as well. Other than that its section are handled
+like all other gamebook-sections. Trying to use the same number twice
+causes the filter to print an error message and abort.
 
-Sections will never be moved from before an ignored top-level header to after
-that header, or vice-versa. An important effect of this is that headers that are
-numbers, like **1** will *stay where they are*, and will also naturally divide
-the gamebook into parts that keeps the story from jump around too much. Most
-books will probably have a **1** header to mark the beginning of the story, and
-that will be guaranteed to remain the first one in the output as well. If the
-last header has a sufficiently high number (say **400**) it will remain the
-last. Any other header can also have a number to fix it in the story, but if
-there are too many sections to shuffle in between fixed headers the filter will
-not be happy (say if you fix **1** and **400**, but there are actually 410
-sections in the book).
+Pangamebook versions before 1.6.0 just shuffled randomly. Starting with version
+1.6.0 a more predictable method is used that tries to spread out sections
+with constant gaps. Sections that are adjacent in the input document will end
+up 23 numbers apart in the output document, if possible. The number 23
+can be configured by setting metadata **gamebook-gap**. If it is set to something
+less than 1 the old method of just randomly shuffling the sections will
+be used instead. The old method also handles numbered input-sections
+slightly differently. It will not allow sections before such a section
+to be shuffled to after it, and vice-versa.
 
 After shuffling all sections that are to be shuffled, all their headings
 are numbered in sequence. There may be gaps created where there are
@@ -87,23 +87,23 @@ Guide](https://pandoc.org/MANUAL.html) for information on all the ways you can
 add style to the output document.
 
 # Configuration
-Pandoc Metadata can be used to configure the output of pangamebook. The
-*-M* (or *--metadata*) flag is used for pandoc to add metadata variables.
-The following variables are supported. Values can also be set in the
-input document for file formats that support metadata blocks (e.g. Pandoc's
-Markdown).
+Pandoc Metadata can be used to configure the output of pangamebook. The *-M* (or
+*--metadata*) flag is used for pandoc to add metadata variables. Values can also
+be set in the input document for file formats that support metadata blocks (e.g.
+Pandoc's Markdown). The following variables are supported:
 
-Name                   Type     Default     Description
----------------------- -------  -------     ---------------------------------
-gamebook-numbers       boolean  true        Replace section names with numbers
-gamebook-post-link     string   ''          Text to add after every link
-gamebook-pre-link      string   ''          Text to add before every link
-gamebook-randomseed    integer  2023        Set random seed for shuffle
-gamebook-shuffle       boolean  true        Shuffle sections
-gamebook-strong-links  boolean  true        Use strong text style for links
+Name                    Type     Default     Description
+----------------------  -------  -------     ---------------------------------
+gamebook-gap            integer  23          Ideal distance between sections
+gamebook-numbers        boolean  true        Replace section names with numbers
+gamebook-post-link      string   ''          Text to add after every link
+gamebook-pre-link       string   ''          Text to add before every link
+gamebook-randomseed     integer  2023        Set random seed for shuffle
+gamebook-shuffle        boolean  true        Shuffle sections
+gamebook-strong-links   boolean  true        Use strong text style for links
 
 # Gamebook Graph (Graphviz DOT)
-The Pandoc filter *pangamebookdot.lua* is included to create a plain-text
+The included Pandoc filter *pangamebookdot.lua* can create a plain-text
 DOT file from a generated gamebook, that can then be used with the *dot*
 command from [Graphviz](https://graphviz.org) to generate an image (e.g PNG)
 of how all sections in the book are connected. Both the original header
@@ -175,8 +175,8 @@ Here is an example of what a key and value can look like:
         "c" : "2"}
 # Development
 Bug reports and feature requests are welcome on GitHub. The goal is to keep this
-tool very simple and focus on only numbering the sections. Additions are most
-likely better done by creating additional Pandoc filters, leaving it to
+tool simple and focus on only shuffling and numbering the sections. Additions
+are most likely better done by creating additional Pandoc filters, leaving it to
 end-users to decide what filters to combine.
 
 Pangamebook is version managed using a private
