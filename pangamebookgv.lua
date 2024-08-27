@@ -1,10 +1,10 @@
--- pandoc filter to output Graphviz DOT graph from gamebook
--- Copyright 2021-2022 Pelle Nilsson
+-- pandoc filter to output Graphviz graph from gamebook
+-- Copyright 2021-2023 Pelle Nilsson
 -- MIT License
 -- source: https://github.com/lifelike/pangamebook
 
--- version: 1.6.0 (2023-09-17)
--- fossil hash: 9f49e29be2c571cf2d7d6d1a01c6b02fe3c8814c9640fa7a162c31e358414342
+-- version: 2.0.1 (2024-08-27)
+-- fossil hash: ef2f6a804b30bbc48a2a5398565d7e607af1319b3fb28c346442eec2e77f00b1
 
 function one_string_from_block(b)
    local result = ""
@@ -31,17 +31,21 @@ function is_gamebook_section_header(el)
    return as_number ~= null and as_number >= 1
 end
 
-function dot_label_for_header(b)
+function gv_label_for_header(b)
    local label = one_string_from_block(b)
    local identifier = b.identifier
    if not (identifier == "section"
        or identifier:sub(1, 8) == "section-") then
       label = label .. '\\n' .. identifier
    end
-   return '"' .. identifier .. '" [label=\"' ..label .. '"];\n'
+   root = ''
+   if tonumber(label) == 1 then
+      root = ',root=true'
+   end
+   return '"' .. identifier .. '" [label=\"' ..label .. '"' .. root .. '];\n'
 end
 
-function dot_link(from, to)
+function gv_link(from, to)
    return '"' .. from .. '" -> "' .. to .. '";\n'
 end
 
@@ -57,7 +61,7 @@ function Pandoc(doc)
    local output = "digraph gamebook {\nnode[shape=box];\n\n"
    for i,el in pairs(doc.blocks) do
       if is_gamebook_section_header(el) then
-         output = output .. dot_label_for_header(el)
+         output = output .. gv_label_for_header(el)
          identifiers["#" .. el.identifier] = el.identifier
       end
    end
@@ -73,7 +77,7 @@ function Pandoc(doc)
             Link = function(c)
                local target = identifiers[c.target]
                if target then
-                  output = output .. dot_link(in_section, target)
+                  output = output .. gv_link(in_section, target)
                   links_out = true
                end
             end

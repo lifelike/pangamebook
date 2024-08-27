@@ -7,7 +7,7 @@ known use-case is to create classic [gamebooks](https://en.wikipedia.org/wiki/Ga
 Pandoc and Pangamebook should run on most modern computers. It has been tested
 on desktop computers running Windows 10, Linux (Lubuntu and Debian) and FreeBSD.
 Also on a Raspberry Pi 4 running Raspberry Pi OS and on an Android phone (in
-Termux). Tested versions of Pandoc include 2.9.2.1 and 3.0.
+Termux). Tested versions of Pandoc include 2.9.2.1, 3.0, and 3.1.8.
 
 # Installing
 To use this filter you need to have Pandoc 2.1 or later installed (see
@@ -24,6 +24,9 @@ Install Pandoc. Install MikTex (as linked from the Pandoc download page).
 Restart computer. Download *pangamebook.lua* and *example.md*.
 That should be enough to be able to run all the
 examples below. Otherwise search for help.
+
+## FreeBSD
+Install the pandoc, texlive-full, and graphviz packages.
 
 # Input Document
 First you need to write your gamebook. The recommended format is [Pandoc's
@@ -102,12 +105,12 @@ gamebook-randomseed     integer  2023        Set random seed for shuffle
 gamebook-shuffle        boolean  true        Shuffle sections
 gamebook-strong-links   boolean  true        Use strong text style for links
 
-# Gamebook Graph (Graphviz DOT)
-The included Pandoc filter *pangamebookdot.lua* can create a plain-text
-DOT file from a generated gamebook, that can then be used with the *dot*
-command from [Graphviz](https://graphviz.org) to generate an image (e.g PNG)
-of how all sections in the book are connected. Both the original header
-and assigned number of each section is included in the graph.
+# Gamebook Graph (Graphviz)
+The included Pandoc filter *pangamebookgv.lua* can create a plain-text Graphviz file
+from a generated gamebook, that can then be used with the *dot* or *twopi*
+commands from [Graphviz](https://graphviz.org) to generate an image (e.g PNG) of
+how all sections in the book are connected. Both the original header and
+assigned number of each section is included in the graph.
 
 # Examples
 The file *example.md* is a Pandoc Markdown example gamebook. Open your favorite
@@ -145,13 +148,13 @@ around links and disable shuffling:
     pandoc -Mgamebook-shuffle=false -Mgamebook-pre-link="[[" -Mgamebook-post-link="]]" --lua-filter=pangamebook.lua -o example.html example.md
 
 To generate a graph from the book first create a new Markdown document
-using the pangamebook filter and then use the pangamebookdot filter
+using the pangamebook filter and then use the pangamebookgv filter
 on the resulting document, before running the Graphviz dot command.
 Pandoc must be told to use plain-text as output format when
 creating the DOT file.
 
     pandoc --lua-filter=pangamebook.lua -o example2.md example.md
-    pandoc --lua-filter=pangamebookdot.lua -t plain -o example2.dot example2.md
+    pandoc --lua-filter=pangamebookgv.lua -t plain -o example2.dot example2.md
     dot -Tpng -O example2.dot
 
 The generated graph will be in the file *example2.dot.png*.
@@ -186,7 +189,7 @@ mirror that is updated with new releases.
 # LICENSE
 MIT License
 
-Copyright (c) 2021-2023 Pelle Nilsson
+Copyright (c) 2021-2024 Pelle Nilsson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

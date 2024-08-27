@@ -1,10 +1,10 @@
 -- pandoc filter to turn headers and links into numbers
--- Copyright 2021-2023 Pelle Nilsson
+-- Copyright 2021-2024 Pelle Nilsson
 -- MIT License
 -- source: https://github.com/lifelike/pangamebook
 
--- version: 1.6.0 (2023-09-17)
--- fossil hash: 9f49e29be2c571cf2d7d6d1a01c6b02fe3c8814c9640fa7a162c31e358414342
+-- version: 2.0.1 (2024-08-27)
+-- fossil hash: ef2f6a804b30bbc48a2a5398565d7e607af1319b3fb28c346442eec2e77f00b1
 
 local nr = 1
 local mapped = {}
@@ -17,8 +17,8 @@ function get_nr_for_header(text, identifier)
        mapped[key] = name_nr
        nr = name_nr + 1
     else
-       print("ERROR: Section number " .. name_nr
-             .. " too low (expected >= " .. nr .. ")")
+       io.stderr:write("ERROR: Section number " .. name_nr
+                       .. " too low (expected >= " .. nr .. ")")
        os.exit(1)
     end
   else
@@ -73,7 +73,7 @@ function shuffle_insert_gap(target, sections)
       if is_number_section_name(section[1]) then
          local number = tonumber(one_string_from_block(section[1]))
          if shuffled[number] then
-            print("Two sections numbered " .. number .. "?")
+            io.stderr:write("ERROR: Two sections numbered " .. number .. "?")
             os.exit(1)
          end
          shuffled[number] = section
@@ -113,8 +113,8 @@ function get_free_index(list, from, max)
          i = 1
       end
    end
-   print("Failed to find free index from " .. from
-         .. "(max " .. max .. ") (should never happen)")
+   io.stderr:write("ERROR: Failed to find free index from " .. from
+                   .. "(max " .. max .. ") (should never happen)")
    os.exit(1)
 end
 
