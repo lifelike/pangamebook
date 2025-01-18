@@ -7,7 +7,8 @@ known use-case is to create classic [gamebooks](https://en.wikipedia.org/wiki/Ga
 Pandoc and Pangamebook should run on most modern computers. It has been tested
 on desktop computers running Windows 10, Linux (Lubuntu and Debian) and FreeBSD.
 Also on a Raspberry Pi 4 running Raspberry Pi OS and on an Android phone (in
-Termux). Tested versions of Pandoc include 2.9.2.1, 3.0, and 3.1.8.
+Termux). Tested versions of Pandoc from around 2.9 to 3.6, but will hopefully
+work in all versions from 2.1 and later.
 
 # Installing
 To use this filter you need to have Pandoc 2.1 or later installed (see
@@ -42,19 +43,23 @@ to that format. Most modern text editors support Markdown, so
 it should not be difficult to get started.
 
 # What the Filter Does
-Pangamebook looks for all top-level headers that consists of only lowercase
-letters, digits, and underscores. Headers like *start*, *first_room*, or
-*finding_some_loot_23* will be affected, but headers like *Introduction*, *How
-To Play*, *character sheet*, or *Epilogue* will be ignored (as they contain
-upper-case letters and/or spaces). All ignored sections are expected to be
-either at the very beginning or end of the document.
+Pangamebook looks for all headers at a specified level (default: top-level) that
+consists of only lowercase letters, digits, and underscores. Headers like
+*start*, *first_room*, or *finding_some_loot_23* will be affected, but headers
+like *Introduction*, *How To Play*, *character sheet*, or *Epilogue* will be
+ignored (as they contain upper-case letters and/or spaces).
 
 Pangamebook collects each affected (i.e. non-ignored) header together with
 everything that follows it up until the next top-level header, including
 lower-level headers and all text and images and tables etc. That collection is
 considered a *section*.
 
-A top-level header that is a (positive) number will keep that number in
+Starting with version 2.1.0 there is some chance that having ignored sections
+between shuffled sections will work. It has not been well tested. For earlier
+versions all ignored sections are expected to be either at the very beginning or
+end of the document.
+
+A section header that is a (positive) number will keep that number in
 the output document as well. Other than that its section are handled
 like all other gamebook-sections. Trying to use the same number twice
 causes the filter to print an error message and abort.
@@ -82,12 +87,28 @@ will become something like "see 12".
 The best way to learn is probably to experiment with the included
 *example.md* and skim some of Pandoc's documentation.
 
+Pangamebook versions before 2.1.0 always used top-level (i.e. level 1)
+headings to mark the beginning of sections. Starting in version 2.1.0
+the meta-data **gamebook-header-levels** can be set to a lower level
+(e.g. 2 for the second level of headings).
+
 # Output Document
 Most or all of the output formats Pandoc support should be possible (e.g. EPUB,
 PDF, HTML). By default Pandoc is going to remove almost all styling from
 documents as part of converting them, but see [Pandoc's User
 Guide](https://pandoc.org/MANUAL.html) for information on all the ways you can
 add style to the output document.
+
+# Pagebreaks
+Metadata **gamebook-pagebreaks** can be set to an integer from 1 to 4 to add
+LaTeX format page-breaks (*\pagebreak*) before each section. This can be used to
+get better page-breaks in generated PDF files. Higher numbers makes the
+pagebreak more likely. A setting of 4 will force pagebreaks, making each section
+begin on a new page. Pagebreaks are disabled by default to not affect backwards
+compatibility with versions prior to 2.1.0 when this feature was added.
+
+See also
+[Manual Page Formatting in WikiBooks LaTeX Book's](https://en.wikibooks.org/wiki/LaTeX/Page_Layout#Manual_page_formatting).
 
 # Configuration
 Pandoc Metadata can be used to configure the output of pangamebook. The *-M* (or
@@ -98,7 +119,9 @@ Pandoc's Markdown). The following variables are supported:
 Name                    Type     Default     Description
 ----------------------  -------  -------     ---------------------------------
 gamebook-gap            integer  23          Ideal distance between sections
+gamebook-header-level   integer  1           Level of headers to begin sections
 gamebook-numbers        boolean  true        Replace section names with numbers
+gamebook-pagebreaks     integer  0           Add LaTeX section pagebreaks (1-4)
 gamebook-post-link      string   ''          Text to add after every link
 gamebook-pre-link       string   ''          Text to add before every link
 gamebook-randomseed     integer  2023        Set random seed for shuffle
@@ -189,7 +212,7 @@ mirror that is updated with new releases.
 # LICENSE
 MIT License
 
-Copyright (c) 2021-2024 Pelle Nilsson
+Copyright (c) 2021-2025 Pelle Nilsson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

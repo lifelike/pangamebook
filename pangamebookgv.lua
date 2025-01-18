@@ -1,10 +1,10 @@
 -- pandoc filter to output Graphviz graph from gamebook
--- Copyright 2021-2023 Pelle Nilsson
+-- Copyright 2021-2025 Pelle Nilsson
 -- MIT License
 -- source: https://github.com/lifelike/pangamebook
 
--- version: 2.0.1 (2024-08-27)
--- fossil hash: ef2f6a804b30bbc48a2a5398565d7e607af1319b3fb28c346442eec2e77f00b1
+-- version: 2.1.0 (2025-01-18)
+-- fossil hash: 587bef4d34ea2fe36bd343f233615638dc18efecbaa3ff3af89aa62890bec8bf
 
 function one_string_from_block(b)
    local result = ""
@@ -23,9 +23,9 @@ end
 
 function is_gamebook_section_header(el)
    if not (el.t == "Header"
-           and el.level == 1) then
+           and el.level == level) then
       return false
-   end 
+   end
    local first = one_string_from_block(el)
    local as_number = tonumber(first)
    return as_number ~= null and as_number >= 1
@@ -51,10 +51,21 @@ end
 
 local endstyle = '[shape=doubleoctagon]'
 
+function from_meta_int(meta, name, default)
+   if meta[name] then
+      local value = pandoc.utils.stringify(meta[name])
+      return tonumber(value)
+   end
+   return default
+end
+
 function Pandoc(doc)
    if not FORMAT:match "plain" then
       return doc
    end
+
+   level = from_meta_int(doc.meta, "gamebook-header-level", 1)
+
    local in_header = nil
    local links_out = false
    local identifiers = {}

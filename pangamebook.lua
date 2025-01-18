@@ -1,10 +1,10 @@
 -- pandoc filter to turn headers and links into numbers
--- Copyright 2021-2024 Pelle Nilsson
+-- Copyright 2021-2025 Pelle Nilsson
 -- MIT License
 -- source: https://github.com/lifelike/pangamebook
 
--- version: 2.0.1 (2024-08-27)
--- fossil hash: ef2f6a804b30bbc48a2a5398565d7e607af1319b3fb28c346442eec2e77f00b1
+-- version: 2.1.0 (2025-01-18)
+-- fossil hash: 587bef4d34ea2fe36bd343f233615638dc18efecbaa3ff3af89aa62890bec8bf
 
 local nr = 1
 local mapped = {}
@@ -58,15 +58,15 @@ function is_number_section_name(el)
    return as_number ~= nil and as_number >= 1
 end
 
-function shuffle_insert(target, sections)
+function shuffle_insert(target, sections, offset)
    if gap < 1 then
       return shuffle_insert_random(target, sections)
    else
-      return shuffle_insert_gap(target, sections)
+      return shuffle_insert_gap(target, sections, offset)
    end
 end
 
-function shuffle_insert_gap(target, sections)
+function shuffle_insert_gap(target, sections, offset)
    local shuffled = {}
    local max = #sections
    for i,section in pairs(sections) do
@@ -76,7 +76,7 @@ function shuffle_insert_gap(target, sections)
             io.stderr:write("ERROR: Two sections numbered " .. number .. "?")
             os.exit(1)
          end
-         shuffled[number] = section
+         shuffled[number - offset] = section
          table.remove(sections, i)
       end
    end
@@ -168,24 +168,27 @@ end
 
 function shuffle_blocks(doc)
    local sections = {}
-   local first_section_i = 0
+   local first_section_i = 1
    local current_section_start = -1
    local blocks = {}
 
    for i,el in pairs(doc.blocks) do
-      if (el.t == "Header"
-          and el.level == 1) then
-         if current_section_start >= 0 then
+      if el.t == "Header" then
+         if (el.level <= level
+             and current_section_start >= 0) then
             insert_sections(sections,
                             current_section_start,
                             i,
                             doc.blocks)
          end
-         if is_valid_section_name(el) then
+         if (el.level == level
+             and is_valid_section_name(el)) then
             current_section_start = i
-         else
+         elseif el.level <= level then
             if #sections > 0 then
-               shuffle_insert(blocks, sections)
+               local next_first_section_i = first_section_i + #sections
+               shuffle_insert(blocks, sections, first_section_i - 1)
+               first_section_i = next_first_section_i
                sections = {}
             end
             table.insert(blocks, el)
@@ -204,7 +207,7 @@ function shuffle_blocks(doc)
                       doc.blocks)
    end
    if #sections > 0 then
-      shuffle_insert(blocks, sections)
+      shuffle_insert(blocks, sections, first_section_i - 1)
    end
    return blocks
 end
@@ -215,6 +218,8 @@ function Pandoc(doc)
   link_pre = from_meta_string(doc.meta, "gamebook-pre-link", "")
   link_post = from_meta_string(doc.meta, "gamebook-post-link", "")
   gap = from_meta_int(doc.meta, "gamebook-gap", 23)
+  level = from_meta_int(doc.meta, "gamebook-header-level", 1)
+  pagebreaks = from_meta_int(doc.meta, "gamebook-pagebreaks", 0)
 
   if from_meta_bool(doc.meta, "gamebook-shuffle", true) then
      local seed_number = from_meta_int(doc.meta, "gamebook-randomseed", 2023)
@@ -226,28 +231,38 @@ function Pandoc(doc)
 end
 
 function Header(el)
-  if (el.level ~= 1
+  local result = {}
+  if (FORMAT:match 'latex'
+      and pagebreaks >= 1 and pagebreaks <= 4) then
+     table.insert(result,
+                  pandoc.RawBlock('latex',
+                                  '\\pagebreak[' .. pagebreaks .. ']'))
+  end
+  if (el.level ~= level
       or not number_sections
       or not (is_valid_section_name(el)
               or is_number_section_name(el))) then
-     return el
+     table.insert(result, el)
+  else
+     local first = one_string_from_block(el)
+     local found = false
+     local replaced = false
+     local identifier = el.identifier
+     table.insert(result,
+                  pandoc.walk_block(
+                     el, {
+                        Str = function(b)
+                           if replaced then
+                              return pandoc.Str("")
+                           else
+                              replaced = true
+                              local nr = get_nr_for_header(b.text, identifier)
+                              return pandoc.Str(nr)
+                           end
+                        end
+     }))
   end
-  local first = one_string_from_block(el)
-  local as_number
-  local found = false
-  local replaced = false
-  local identifier = el.identifier
-  return pandoc.walk_block(el, {
-    Str = function(b)
-            if replaced then
-              return pandoc.Str("")
-            else
-              replaced = true
-              local nr = get_nr_for_header(b.text, identifier)
-              return pandoc.Str(nr)
-            end
-          end
-    })
+  return result
 end
 
 function Link(el)
